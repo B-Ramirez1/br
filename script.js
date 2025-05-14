@@ -5,6 +5,9 @@ const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.getElementById("send-btn");
 let userMessage = null;
 const inputInitHeight = chatInput.scrollHeight;
+const SUPABASE_URL = 'https://cevraprgzagkazoprsxe.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnJhcHJnemFna2F6b3Byc3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODc3MTAsImV4cCI6MjA2Mjc2MzcxMH0.u0WpyFR13xRW7Osjdw74LxQRD9q4fnr9LLZ288b88Dw';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Public bathrooms dataset state
 let bathroomsData = [];
@@ -37,8 +40,13 @@ const fetchAndShowBathrooms = async (chatElement, initial = false) => {
   if (bathroomsData.length === 0) {
     messageElement.textContent = "Looking up public bathrooms in NYC...";
     try {
-      const response = await fetch("https://data.cityofnewyork.us/resource/i7jb-7jku.json");
-      bathroomsData = await response.json();
+        //uncomment this code when database is updated 
+       const { data, error } = await supabaseClient.from("br").select("*");
+       console.log(data)
+       bathroomsData = data
+       //comment out the 2 lines below
+      // const response = await fetch("https://data.cityofnewyork.us/resource/i7jb-7jku.json");
+      // bathroomsData = await response.json();
       bathroomsShown = 0;
     } catch (error) {
       messageElement.textContent = "Error fetching bathrooms: " + error.message;
